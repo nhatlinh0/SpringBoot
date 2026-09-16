@@ -1,0 +1,31 @@
+package net.engineeringdigest.journalApp.repository;
+
+import net.engineeringdigest.journalApp.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class UserRepositoryImpl {
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    public List<User> getUserForSA() {
+        Query query = new Query();
+//        Criteria criteria = new Criteria();
+//        query.addCriteria(criteria.orOperator(
+//                Criteria.where("userName").is("nho7"),
+//                Criteria.where("email").ne("").ne(null)
+//        ));
+
+        query.addCriteria(Criteria.where("email").regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"));
+        query.addCriteria(Criteria.where("sentimentAnalysis").is("false"));
+
+        List<User> users =  mongoTemplate.find(query, User.class);
+        return users;
+    }
+}
